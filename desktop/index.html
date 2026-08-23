@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Each variant sits on the surface it contrasts with: the dark tile
+         on light chrome, the light tile on dark chrome. Browsers without
+         media support fall back to the first link (the dark tile, which is
+         the primary app icon). -->
+    <link rel="icon" type="image/png" href="/icon.png" media="(prefers-color-scheme: light)" />
+    <link rel="icon" type="image/png" href="/icon-light.png" media="(prefers-color-scheme: dark)" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title></title>
+    <script>
+      // The shell injects the saved theme before this script runs; honor that
+      // first, then the localStorage cache, then the OS appearance.
+      try {
+        const painted = document.documentElement.dataset.theme;
+        const savedTheme = localStorage.getItem("meetwrite.theme");
+        document.documentElement.dataset.theme =
+          painted === "dark" || painted === "light"
+            ? painted
+            : savedTheme === "dark" || savedTheme === "light"
+              ? savedTheme
+              : matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+      } catch {}
+    </script>
+    <style>
+      /* One stable startup frame: the splash and the React loading state both
+         center "meetwrite". #root needs its full height here too, otherwise
+         the splash sits at the top until the bundle's stylesheet kicks in.
+         #root stays transparent — like in the app stylesheet — so the
+         themed html/body background shows through it. */
+      html,
+      body,
+      #root {
+        height: 100%;
+        margin: 0;
+      }
+      html,
+      body {
+        background: #fafafa;
+      }
+      html[data-theme="dark"],
+      html[data-theme="dark"] body {
+        background: #252525;
+      }
+      #splash {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #splash span {
+        font: 500 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        letter-spacing: 0.025em;
+        color: #a1a1a1;
+      }
+      html[data-theme="dark"] #splash span {
+        color: #a3a3a3;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"><div id="splash"><span>meetwrite</span></div></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

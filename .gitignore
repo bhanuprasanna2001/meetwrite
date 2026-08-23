@@ -1,0 +1,51 @@
+## ------------------ Python ------------------ ##
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Database
+meetwrite.db
+meetwrite.db-shm
+meetwrite.db-wal
+api/audio/*
+
+
+## ------------------ Tauri ------------------ ##
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Sidecar binaries (built by `make sidecar`) and PyInstaller spec files
+*.spec
+desktop/src-tauri/binaries/
+desktop/src-tauri/sidecar-runtime/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

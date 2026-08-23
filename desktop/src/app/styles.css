@@ -1,0 +1,463 @@
+@import "tailwindcss";
+
+/* Self-hosted note fonts (latin subset, regular weight only — the note editor
+   is a plain textarea, so no bold/italic). Served from public/fonts so they
+   render offline with no CDN dependency. */
+@font-face {
+  font-family: "Lato";
+  src: url("/fonts/lato.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Lora";
+  src: url("/fonts/lora.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/jetbrains-mono.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* The `dark:` variant follows the user's saved theme (settings.theme drives
+   the data-theme attribute) instead of the OS preference. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Palette: shades of alabaster #FAFAFA and jet #252525. No pure white or
+   black anywhere in the UI. */
+@theme {
+  /* ink — shades of #252525 (jet) */
+  --color-ink: #252525;
+  --color-ink-soft: #3d3d3d;
+  --color-ink-mute: #757575;
+  --color-ink-faint: #a1a1a1;
+  --color-ink-line: #e6e6e6;
+  --color-ink-surface: #efefef;
+
+  /* paper — shades of #fafafa (alabaster) */
+  --color-paper: #fafafa;
+  --color-paper-dim: #d9d9d9;
+  --color-paper-soft: #cfcfcf;
+  --color-paper-mute: #a3a3a3;
+  --color-paper-faint: #8a8a8a;
+  --color-paper-line: #3c3c3c;
+  --color-paper-surface: #2c2c2c;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+/* The whole document follows the theme — no layer underneath may stay white
+   in dark mode, and nothing transitions, so every surface flips in the same
+   frame the native window does. */
+html,
+body {
+  @apply bg-paper dark:bg-ink;
+}
+
+body {
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Text fields stay selectable (onboarding name input). */
+input,
+textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* ui-shell spec: no visible scrollbars anywhere (scrolling still works). */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* The onboarding brand wave (BrandWave): bars breathing in red — the only
+   motion besides the recording indicator. */
+@keyframes eq-breathe {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+/* Onboarding steps fade upward into place — the only motion besides the
+   recording wave. */
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Markdown prose — the one rendered surface shared by note previews,
+   assistant answers, and enhanced notes. Typography follows the block's
+   inherited font (the note font setting) and scale; chrome stays ink/paper.
+   --------------------------------------------------------------------------- */
+
+.prose-note {
+  user-select: text;
+  -webkit-user-select: text;
+  line-height: 1.7;
+  overflow-wrap: break-word;
+  /* Width is the container's job: the note preview column sets the measure,
+     chat messages use their own width. */
+}
+
+.prose-note > :first-child {
+  margin-top: 0;
+}
+.prose-note > :last-child {
+  margin-bottom: 0;
+}
+
+.prose-note :is(h1, h2, h3, h4, h5, h6) {
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 1.4em 0 0.5em;
+}
+.prose-note h1 {
+  font-size: 1.6em;
+}
+.prose-note h2 {
+  font-size: 1.3em;
+}
+.prose-note h3 {
+  font-size: 1.15em;
+}
+.prose-note :is(h4, h5, h6) {
+  font-size: 1em;
+}
+
+.prose-note p {
+  margin: 0.7em 0;
+}
+
+.prose-note ul,
+.prose-note ol {
+  margin: 0.7em 0;
+  padding-left: 1.5em;
+}
+.prose-note ul {
+  list-style: disc;
+}
+.prose-note ol {
+  list-style: decimal;
+}
+.prose-note li {
+  margin: 0.25em 0;
+}
+.prose-note li > ul,
+.prose-note li > ol {
+  margin: 0.25em 0;
+}
+
+/* Task lists: the checkbox is decorative — the note text is the truth. */
+.prose-note li:has(> input[type="checkbox"]) {
+  list-style: none;
+  margin-left: -1.3em;
+}
+.prose-note input[type="checkbox"] {
+  margin-right: 0.5em;
+  accent-color: var(--color-ink);
+}
+[data-theme="dark"] .prose-note input[type="checkbox"] {
+  accent-color: var(--color-paper);
+}
+
+.prose-note blockquote {
+  margin: 0.8em 0;
+  padding-left: 0.9em;
+  border-left: 2px solid var(--color-ink-line);
+  color: var(--color-ink-mute);
+}
+[data-theme="dark"] .prose-note blockquote {
+  border-left-color: var(--color-paper-line);
+  color: var(--color-paper-mute);
+}
+
+.prose-note a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: var(--color-ink);
+}
+[data-theme="dark"] .prose-note a {
+  color: var(--color-paper);
+}
+
+.prose-note code {
+  font-family: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.85em;
+}
+.prose-note :not(pre) > code {
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+  background: var(--color-ink-line);
+  color: var(--color-ink-soft);
+}
+[data-theme="dark"] .prose-note :not(pre) > code {
+  background: var(--color-paper-line);
+  color: var(--color-paper-soft);
+}
+
+.prose-note pre {
+  margin: 0.9em 0;
+  padding: 0.9em 1em;
+  border-radius: 10px;
+  background: var(--color-ink-surface);
+  border: 1px solid var(--color-ink-line);
+  overflow-x: auto;
+  line-height: 1.55;
+  color: var(--color-ink-soft);
+}
+[data-theme="dark"] .prose-note pre {
+  background: var(--color-paper-surface);
+  border-color: var(--color-paper-line);
+  color: var(--color-paper-soft);
+}
+
+.prose-note table {
+  margin: 0.9em 0;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+.prose-note th,
+.prose-note td {
+  border: 1px solid var(--color-ink-line);
+  padding: 0.4em 0.7em;
+  text-align: left;
+}
+[data-theme="dark"] .prose-note th,
+[data-theme="dark"] .prose-note td {
+  border-color: var(--color-paper-line);
+}
+.prose-note th {
+  font-weight: 600;
+  background: var(--color-ink-surface);
+}
+[data-theme="dark"] .prose-note th {
+  background: var(--color-paper-surface);
+}
+
+.prose-note hr {
+  margin: 1.4em 0;
+  border: none;
+  border-top: 1px solid var(--color-ink-line);
+}
+[data-theme="dark"] .prose-note hr {
+  border-top-color: var(--color-paper-line);
+}
+
+/* Note-owned pictures: contained, rounded, clickable (opens the viewer). */
+.prose-note img.note-img {
+  max-width: 100%;
+  border-radius: 10px;
+  cursor: zoom-in;
+}
+
+/* The frontmatter card: one quiet row per field, empty values hidden.
+   Keys read as small labels, values as text or links. */
+.prose-note .prose-meta {
+  margin: 0 0 1.1em;
+  padding: 0.7em 1em;
+  border: 1px solid var(--color-ink-line);
+  border-radius: 10px;
+  background: var(--color-ink-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+}
+[data-theme="dark"] .prose-note .prose-meta {
+  border-color: var(--color-paper-line);
+  background: var(--color-paper-surface);
+}
+.prose-note .prose-meta-row {
+  display: flex;
+  gap: 1em;
+  align-items: baseline;
+}
+.prose-note .prose-meta dt {
+  flex: none;
+  width: 9.5em;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-mute);
+}
+[data-theme="dark"] .prose-note .prose-meta dt {
+  color: var(--color-paper-mute);
+}
+.prose-note .prose-meta dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.9em;
+}
+
+/* A small set of highlight colors — enough to read code, nothing loud. */
+.prose-note .hljs-comment,
+.prose-note .hljs-quote {
+  color: var(--color-ink-faint);
+  font-style: italic;
+}
+[data-theme="dark"] .prose-note .hljs-comment,
+[data-theme="dark"] .prose-note .hljs-quote {
+  color: var(--color-paper-faint);
+}
+.prose-note .hljs-keyword,
+.prose-note .hljs-selector-tag,
+.prose-note .hljs-type {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+[data-theme="dark"] .prose-note .hljs-keyword,
+[data-theme="dark"] .prose-note .hljs-selector-tag,
+[data-theme="dark"] .prose-note .hljs-type {
+  color: var(--color-paper);
+}
+.prose-note .hljs-string,
+.prose-note .hljs-regexp {
+  color: #4a7d59;
+}
+[data-theme="dark"] .prose-note .hljs-string,
+[data-theme="dark"] .prose-note .hljs-regexp {
+  color: #8fbf9f;
+}
+.prose-note .hljs-number,
+.prose-note .hljs-literal {
+  color: #3b6ea5;
+}
+[data-theme="dark"] .prose-note .hljs-number,
+[data-theme="dark"] .prose-note .hljs-literal {
+  color: #8ab0d9;
+}
+.prose-note .hljs-title,
+.prose-note .hljs-title.function_,
+.prose-note .hljs-title.class_ {
+  font-weight: 600;
+}
+.prose-note .hljs-attr,
+.prose-note .hljs-attribute,
+.prose-note .hljs-built_in {
+  color: #8a5a2b;
+}
+[data-theme="dark"] .prose-note .hljs-attr,
+[data-theme="dark"] .prose-note .hljs-attribute,
+[data-theme="dark"] .prose-note .hljs-built_in {
+  color: #d4a970;
+}
+
+/* ---------------------------------------------------------------------------
+   Admonitions (`> [!NOTE]` and friends) — a tinted left border, a small
+   uppercase label from CSS, the quote's text inside. One rule per type.
+   --------------------------------------------------------------------------- */
+
+.admonition {
+  margin: 0.9em 0;
+  padding: 0.7em 1em 0.7em 0.95em;
+  border: 1px solid var(--admonition-line);
+  border-left: 3px solid var(--admonition-accent);
+  border-radius: 10px;
+  background: var(--admonition-bg);
+}
+.admonition::before {
+  content: var(--admonition-label);
+  display: block;
+  margin-bottom: 0.25em;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--admonition-accent);
+}
+.admonition > :last-child {
+  margin-bottom: 0;
+}
+.admonition code {
+  background: transparent;
+}
+
+.admonition-note {
+  --admonition-accent: var(--color-ink-mute);
+  --admonition-line: var(--color-ink-line);
+  --admonition-bg: var(--color-ink-surface);
+  --admonition-label: "Note";
+}
+.admonition-tip {
+  --admonition-accent: #4a7d59;
+  --admonition-line: #cfe0d3;
+  --admonition-bg: #eef4ef;
+  --admonition-label: "Tip";
+}
+.admonition-important {
+  --admonition-accent: #3b6ea5;
+  --admonition-line: #d2dfee;
+  --admonition-bg: #eef3f9;
+  --admonition-label: "Important";
+}
+.admonition-warning {
+  --admonition-accent: #b0790b;
+  --admonition-line: #eadfbe;
+  --admonition-bg: #faf4e4;
+  --admonition-label: "Warning";
+}
+.admonition-caution {
+  --admonition-accent: #b03a30;
+  --admonition-line: #eccfcc;
+  --admonition-bg: #f9eeed;
+  --admonition-label: "Caution";
+}
+
+[data-theme="dark"] .admonition-note {
+  --admonition-accent: var(--color-paper-mute);
+  --admonition-line: var(--color-paper-line);
+  --admonition-bg: var(--color-paper-surface);
+}
+[data-theme="dark"] .admonition-tip {
+  --admonition-accent: #8fbf9f;
+  --admonition-line: #2f4537;
+  --admonition-bg: #263029;
+}
+[data-theme="dark"] .admonition-important {
+  --admonition-accent: #8ab0d9;
+  --admonition-line: #32445c;
+  --admonition-bg: #28303a;
+}
+[data-theme="dark"] .admonition-warning {
+  --admonition-accent: #d9b45c;
+  --admonition-line: #4d4226;
+  --admonition-bg: #373125;
+}
+[data-theme="dark"] .admonition-caution {
+  --admonition-accent: #d98a82;
+  --admonition-line: #55302c;
+  --admonition-bg: #3a2826;
+}

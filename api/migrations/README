@@ -1,0 +1,5 @@
+Alembic is the only runtime schema authority for the meetwrite sidecar.
+
+The application imports all tables from `meetwrite.db.models`, upgrades to
+`head` before opening its request engine, and fails startup if migration fails.
+See `../README.md` for the migration workflow and pre-production reset policy.

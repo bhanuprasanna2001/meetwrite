@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+/* The two voices of the page — Garamond and Garamond Italic, self-hosted. */
+@font-face {
+  font-family: "Garamond";
+  src: url("/fonts/garamond.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Garamond";
+  src: url("/fonts/garamond-italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* The note editor's voice (the app glimpse shows the real UI). */
+@font-face {
+  font-family: "Lato";
+  src: url("/fonts/lato.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* The dark variant follows the page theme (data-theme), not the OS. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Palette: jet #252525, alabaster #fafafa, one red. */
+@theme {
+  --color-jet: #252525;
+  --color-jet-soft: #3d3d3d;
+  --color-jet-mute: #757575;
+  --color-jet-faint: #a1a1a1;
+  --color-jet-line: #e6e6e6;
+  --color-jet-surface: #efefef;
+
+  --color-alabaster: #fafafa;
+  --color-alabaster-soft: #cfcfcf;
+  --color-alabaster-mute: #a3a3a3;
+  --color-alabaster-faint: #8a8a8a;
+  --color-alabaster-line: #3c3c3c;
+  --color-alabaster-surface: #2c2c2c;
+
+  --color-red: #ef4444;
+
+  --font-garamond: "Garamond", "Iowan Old Style", "Palatino", Georgia, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  @apply bg-alabaster text-jet dark:bg-jet dark:text-alabaster;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-red);
+  color: var(--color-alabaster);
+}
+
+/* The editor caret in the app glimpse — the page's only motion. */
+@keyframes caret-blink {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.caret {
+  animation: caret-blink 1.1s steps(1) infinite;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .caret {
+    animation: none;
+  }
+}

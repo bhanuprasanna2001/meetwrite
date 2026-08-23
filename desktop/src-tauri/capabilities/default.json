@@ -1,0 +1,25 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the main window",
+  "windows": ["main"],
+  "platforms": ["macOS"],
+  "permissions": [
+    "core:app:allow-version",
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "core:menu:allow-create-default",
+    "core:menu:allow-insert",
+    "core:menu:allow-items",
+    "core:menu:allow-new",
+    "core:menu:allow-remove-at",
+    "core:menu:allow-set-as-app-menu",
+    "core:menu:allow-text",
+    "core:resources:allow-close",
+    "core:window:allow-destroy",
+    "core:window:allow-is-fullscreen",
+    "core:window:allow-start-dragging",
+    "core:window:allow-toggle-maximize",
+    "opener:default"
+  ]
+}

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="meetwrite listens to your meetings and writes the notes — a live transcript, a chat that answers, and prose worth keeping. Everything stays on your Mac."
+    />
+    <title>meetwrite — The meeting, written.</title>
+    <script>
+      // Paint the saved theme before first render — no flash, one path:
+      // saved theme, else the OS preference.
+      (function () {
+        var saved = null;
+        try {
+          saved = localStorage.getItem("meetwrite-theme");
+        } catch {
+          saved = null;
+        }
+        var theme =
+          saved === "light" || saved === "dark"
+            ? saved
+            : window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

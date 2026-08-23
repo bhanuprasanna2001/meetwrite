@@ -1,0 +1,69 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "meetwrite",
+  "version": "0.1.0",
+  "identifier": "com.bhanuprasanna.meetwrite",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "",
+        "create": false,
+        "width": 1100,
+        "height": 600,
+        "minWidth": 1100,
+        "minHeight": 600,
+        "decorations": true,
+        "hiddenTitle": true,
+        "titleBarStyle": "Overlay",
+        "resizable": true,
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": {
+        "default-src": "'self'",
+        "connect-src": "'self' ipc: http://ipc.localhost http://127.0.0.1:8321 ws://127.0.0.1:8321",
+        "font-src": "'self'",
+        "img-src": "'self' data: http://127.0.0.1:8321 https:",
+        "media-src": "'self' blob: http://127.0.0.1:8321",
+        "object-src": "'none'",
+        "style-src": "'self' 'unsafe-inline'"
+      },
+      "devCsp": {
+        "default-src": "'self'",
+        "connect-src": "'self' ipc: http://ipc.localhost http://127.0.0.1:8321 ws://127.0.0.1:8321 ws://localhost:1420",
+        "font-src": "'self'",
+        "img-src": "'self' data: http://127.0.0.1:8321 https:",
+        "media-src": "'self' blob: http://127.0.0.1:8321",
+        "object-src": "'none'",
+        "style-src": "'self' 'unsafe-inline'"
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "macOS": {
+      "entitlements": "./Entitlements.plist",
+      "minimumSystemVersion": "14.2"
+    },
+    "externalBin": ["binaries/meetwrite-sidecar"],
+    "resources": [
+      "sidecar-runtime/meetwrite-sidecar",
+      "sidecar-runtime/_internal"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
+  }
+}

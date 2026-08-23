@@ -1,0 +1,35 @@
+[package]
+name = "meetwrite"
+version = "0.1.0"
+description = "Minimalist, local-first meeting notes for Mac. Record, write, ask."
+edition = "2021"
+rust-version = "1.85"
+
+[lib]
+name = "meetwrite_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+log = "0.4"
+serde = { version = "1", features = ["derive"] }
+tauri = { version = "2", features = [] }
+tauri-plugin-log = "2"
+tauri-plugin-opener = "2"
+tauri-plugin-shell = "2"
+
+# Native capture and window integration. Core Audio process taps require macOS 14.2.
+[target."cfg(target_os = \"macos\")".dependencies]
+base64 = "0.22.1"
+block2 = { version = "0.6", default-features = false, features = ["alloc"] }
+core-graphics = "0.25"
+cpal = "0.18.2"
+cidre = { version = "0.15", features = ["av", "blocks"] }
+objc2 = "0.6"
+objc2-app-kit = { version = "0.3", features = ["NSWindow", "NSButton", "NSControl", "NSView"] }
+objc2-av-foundation = { version = "0.3", features = ["AVCaptureDevice", "AVMediaFormat", "block2"] }
+ringbuf = "0.4.8"
+rubato = "0.16.2"
+webrtc-audio-processing = { version = "~2.0", features = ["bundled"] }
